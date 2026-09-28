@@ -1,213 +1,52 @@
-/**
-* Template Name: Bikin
-* Template URL: https://bootstrapmade.com/bikin-free-simple-landing-page-template/
-* Updated: Aug 07 2024 with Bootstrap v5.3.3
-* Author: BootstrapMade.com
-* License: https://bootstrapmade.com/license/
-*/
 
-(function() {
-  "use strict";
-
-  /**
-   * Apply .scrolled class to the body as the page is scrolled down
-   */
-  function toggleScrolled() {
-    const selectBody = document.querySelector('body');
-    const selectHeader = document.querySelector('#header');
-    if (!selectHeader.classList.contains('scroll-up-sticky') && !selectHeader.classList.contains('sticky-top') && !selectHeader.classList.contains('fixed-top')) return;
-    window.scrollY > 100 ? selectBody.classList.add('scrolled') : selectBody.classList.remove('scrolled');
-  }
-
-  document.addEventListener('scroll', toggleScrolled);
-  window.addEventListener('load', toggleScrolled);
-
-  /**
-   * Mobile nav toggle
-   */
-  const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
-
-  function mobileNavToogle() {
-    document.querySelector('body').classList.toggle('mobile-nav-active');
-    mobileNavToggleBtn.classList.toggle('bi-list');
-    mobileNavToggleBtn.classList.toggle('bi-x');
-  }
-  mobileNavToggleBtn.addEventListener('click', mobileNavToogle);
-
-  /**
-   * Hide mobile nav on same-page/hash links
-   */
-  document.querySelectorAll('#navmenu a').forEach(navmenu => {
-    navmenu.addEventListener('click', () => {
-      if (document.querySelector('.mobile-nav-active')) {
-        mobileNavToogle();
-      }
-    });
-
-  });
-
-  /**
-   * Toggle mobile nav dropdowns
-   */
-  document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
-    navmenu.addEventListener('click', function(e) {
-      e.preventDefault();
-      this.parentNode.classList.toggle('active');
-      this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
-      e.stopImmediatePropagation();
-    });
-  });
-
-  /**
-   * Preloader
-   */
-  const preloader = document.querySelector('#preloader');
-  if (preloader) {
-    window.addEventListener('load', () => {
-      preloader.remove();
-    });
-  }
-
-  /**
-   * Scroll top button
-   */
-  let scrollTop = document.querySelector('.scroll-top');
-
-  function toggleScrollTop() {
-    if (scrollTop) {
-      window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
-    }
-  }
-  scrollTop.addEventListener('click', (e) => {
-    e.preventDefault();
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-  });
-
-  window.addEventListener('load', toggleScrollTop);
-  document.addEventListener('scroll', toggleScrollTop);
-
-  /**
-   * Animation on scroll function and init
-   */
-  function aosInit() {
-    AOS.init({
-      duration: 600,
-      easing: 'ease-in-out',
-      once: true,
-      mirror: false
-    });
-  }
-  window.addEventListener('load', aosInit);
-
-  /**
-   * Initiate glightbox
-   */
-  const glightbox = GLightbox({
-    selector: '.glightbox'
-  });
-
-  /**
-   * Init isotope layout and filters
-   */
-  document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
-    let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
-    let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
-    let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
-
-    let initIsotope;
-    imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
-      initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
-        itemSelector: '.isotope-item',
-        layoutMode: layout,
-        filter: filter,
-        sortBy: sort
-      });
-    });
-
-    isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
-      filters.addEventListener('click', function() {
-        isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
-        this.classList.add('filter-active');
-        initIsotope.arrange({
-          filter: this.getAttribute('data-filter')
-        });
-        if (typeof aosInit === 'function') {
-          aosInit();
-        }
-      }, false);
-    });
-
-  });
-
-  /**
-   * Init swiper sliders
-   */
-  function initSwiper() {
-    document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
-      let config = JSON.parse(
-        swiperElement.querySelector(".swiper-config").innerHTML.trim()
-      );
-
-      if (swiperElement.classList.contains("swiper-tab")) {
-        initSwiperWithCustomPagination(swiperElement, config);
-      } else {
-        new Swiper(swiperElement, config);
-      }
-    });
-  }
-
-  window.addEventListener("load", initSwiper);
-
-  /**
-   * Frequently Asked Questions Toggle
-   */
-  document.querySelectorAll('.faq-item h3, .faq-item .faq-toggle').forEach((faqItem) => {
-    faqItem.addEventListener('click', () => {
-      faqItem.parentNode.classList.toggle('faq-active');
-    });
-  });
-
-  /**
-   * Correct scrolling position upon page load for URLs containing hash links.
-   */
-  window.addEventListener('load', function(e) {
-    if (window.location.hash) {
-      if (document.querySelector(window.location.hash)) {
-        setTimeout(() => {
-          let section = document.querySelector(window.location.hash);
-          let scrollMarginTop = getComputedStyle(section).scrollMarginTop;
-          window.scrollTo({
-            top: section.offsetTop - parseInt(scrollMarginTop),
-            behavior: 'smooth'
-          });
-        }, 100);
-      }
-    }
-  });
-
-  /**
-   * Navmenu Scrollspy
-   */
-  let navmenulinks = document.querySelectorAll('.navmenu a');
-
-  function navmenuScrollspy() {
-    navmenulinks.forEach(navmenulink => {
-      if (!navmenulink.hash) return;
-      let section = document.querySelector(navmenulink.hash);
-      if (!section) return;
-      let position = window.scrollY + 200;
-      if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
-        document.querySelectorAll('.navmenu a.active').forEach(link => link.classList.remove('active'));
-        navmenulink.classList.add('active');
-      } else {
-        navmenulink.classList.remove('active');
-      }
-    })
-  }
-  window.addEventListener('load', navmenuScrollspy);
-  document.addEventListener('scroll', navmenuScrollspy);
-
-})();
+const GOOGLE_SHEET_WEBHOOK = "https://script.google.com/macros/s/AKfycbxZWPsiCuOumFQugWoJrG-o3MWuJf8xRHRpl9GF9iMCt4ZKyN5ynOWanOxFNjvDe-IV/exec";
+const FINAL_FORM_URL = "https://docs.google.com/forms/d/e/1FAIpQLSexq5kZ9xPARMug7HFBH627dSio7PZx19FQrWQepQhw8s--pA/viewform";
+let currentSource = "مباشر";
+function openLeadModal(sourceText){currentSource=sourceText||"مباشر";document.getElementById('leadSource').value=currentSource;document.getElementById('leadModal').classList.add('active');document.body.style.overflow='hidden';}
+function closeLeadModal(){document.getElementById('leadModal').classList.remove('active');document.body.style.overflow='';}
+function handleLeadSubmit(e){
+e.preventDefault();
+const name=document.getElementById('leadName').value.trim();
+const phone=document.getElementById('leadPhone').value.trim();
+const source=document.getElementById('leadSource').value||currentSource;
+const btn=document.getElementById('leadSubmitBtn');
+const btnText=btn.querySelector('.btn-text');
+const btnLoader=btn.querySelector('.btn-loader');
+const errorDiv=document.getElementById('leadError');
+errorDiv.style.display='none';
+if(name.length<2){errorDiv.textContent='الرجاء إدخال اسم صحيح';errorDiv.style.display='block';return false;}
+if(!/^09[0-9]{8}$/.test(phone)){errorDiv.textContent='رقم الهاتف يجب أن يكون 10 أرقام يبدأ بـ 09';errorDiv.style.display='block';return false;}
+btnText.style.display='none';btnLoader.style.display='inline';btn.disabled=true;
+localStorage.setItem('lead_name',name);localStorage.setItem('lead_phone',phone);localStorage.setItem('lead_source',source);
+// فتح التقييم فوراً لتفادي حظر المتصفح
+const win = window.open(FINAL_FORM_URL, '_blank');
+fetch(GOOGLE_SHEET_WEBHOOK,{
+  method:'POST',
+  mode:'no-cors',
+  headers:{'Content-Type':'text/plain;charset=utf-8'},
+  body:JSON.stringify({name:name,phone:phone,source:source})
+}).catch(err=>console.warn('Sheet error', err))
+.finally(()=>{
+  setTimeout(()=>{
+    btnText.style.display='inline';btnLoader.style.display='none';btn.disabled=false;
+    closeLeadModal();
+    document.getElementById('leadForm').reset();
+  }, 500);
+});
+if(!win){
+  errorDiv.textContent='الرجاء السماح بالنوافذ المنبثقة ليفتح التقييم';
+  errorDiv.style.display='block';
+  btnText.style.display='inline';btnLoader.style.display='none';btn.disabled=false;
+  setTimeout(()=>{ window.location.href = FINAL_FORM_URL; }, 1000);
+}
+return false;
+}
+window.openLeadModal = openLeadModal;
+window.closeLeadModal = closeLeadModal;
+window.handleLeadSubmit = handleLeadSubmit;
+document.addEventListener('DOMContentLoaded',function(){
+document.querySelectorAll('.btn-get-started,.btn-outline-primary,.btn-primary-custom,.btn-secondary-custom').forEach(btn=>{
+btn.addEventListener('click',function(e){e.preventDefault();const source=btn.getAttribute('data-source')||btn.textContent.trim()||'مباشر';openLeadModal(source);});
+});
+if(typeof AOS !== 'undefined') AOS.init();
+});
